@@ -1,35 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import LandingPage from "./pages/LandingPage.jsx";
+// Correct the casing here from "DashBoard.jsx" to "Dashboard.jsx"
+import Dashboard from "./pages/DashBoard.jsx"; 
+import LoginModal from "./components/LoginModal.jsx";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app">
+      {isLoggedIn ? (
+        <Dashboard setIsLoggedIn={setIsLoggedIn} />
+      ) : (
+        <LandingPage setShowLoginModal={setShowLoginModal} />
+      )}
+      {showLoginModal && (
+        <LoginModal
+          setShowLoginModal={setShowLoginModal}
+          setIsLoggedIn={setIsLoggedIn}
+        />
+      )}
+    </div>
+  );
+};
 
-export default App
+export default App;
