@@ -3,7 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
-// ========== LOCAL AUTHENTICATION ROUTES (Original) ==========
+// ========== LOCAL AUTHENTICATION ROUTES ==========
 
 // POST /api/auth/register - Register with email/password
 router.post('/register', authController.register);
@@ -11,19 +11,19 @@ router.post('/register', authController.register);
 // POST /api/auth/login - Login with email/password
 router.post('/login', authController.login);
 
-// ========== GOOGLE OAUTH ROUTES ==========
+// ========== GOOGLE OAUTH ROUTES (Client-Side Flow) ==========
 
 // POST /api/auth/google - Handle Google OAuth authentication
-// Frontend should send: { googleId, name, email, avatar }
+// The frontend will send the user's profile info here.
 router.post('/google', authController.googleAuth);
 
-// ========== GITHUB OAUTH ROUTES ==========
+// ========== GITHUB OAUTH ROUTES (Client-Side Flow) ==========
 
-// POST /api/auth/github - Handle GitHub OAuth authentication  
-// Frontend should send: { githubId, name, email, avatar }
+// POST /api/auth/github - Handle GitHub OAuth authentication
+// The frontend will send the user's profile info here.
 router.post('/github', authController.githubAuth);
 
-// ========== PROTECTED ROUTES (for all auth types) ==========
+// ========== PROTECTED ROUTES ==========
 
 // GET /api/auth/me - Get current user profile
 router.get('/me', protect, (req, res) => {
@@ -37,39 +37,33 @@ router.get('/me', protect, (req, res) => {
   });
 });
 
-// ========== OPTIONAL: SERVER-SIDE OAUTH ROUTES (if you want to handle OAuth server-side) ==========
-
 /*
-// If you want to implement server-side OAuth flow, uncomment and configure these:
+// The server-side OAuth routes below have been commented out
+// because they conflict with the simpler client-side flow above
+// and cause an error due to the missing generateToken function.
 
 const passport = require('passport');
 
-// GET /api/auth/google/login - Redirect to Google OAuth
-router.get('/google/login', passport.authenticate('google', { 
-  scope: ['profile', 'email'] 
+router.get('/google/login', passport.authenticate('google', {
+  scope: ['profile', 'email']
 }));
 
-// GET /api/auth/google/callback - Google OAuth callback
-router.get('/google/callback', 
+router.get('/google/callback',
   passport.authenticate('google', { session: false }),
   (req, res) => {
-    const token = generateToken(req.user._id);
-    // Redirect to frontend with token
+    const token = generateToken(req.user._id); // This would cause an error
     res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
   }
 );
 
-// GET /api/auth/github/login - Redirect to GitHub OAuth
-router.get('/github/login', passport.authenticate('github', { 
-  scope: ['user:email'] 
+router.get('/github/login', passport.authenticate('github', {
+  scope: ['user:email']
 }));
 
-// GET /api/auth/github/callback - GitHub OAuth callback
 router.get('/github/callback',
   passport.authenticate('github', { session: false }),
   (req, res) => {
-    const token = generateToken(req.user._id);
-    // Redirect to frontend with token
+    const token = generateToken(req.user._id); // This would cause an error
     res.redirect(`${process.env.CLIENT_URL}/auth/success?token=${token}`);
   }
 );

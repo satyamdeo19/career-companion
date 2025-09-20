@@ -1,8 +1,23 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Target, User, Bell, Star, ArrowRight } from "lucide-react";
 import { features } from "../services/featureData.jsx";
 
-const Dashboard = ({ setIsLoggedIn }) => {
+const Dashboard = ({ handleLogout }) => {
+  const navigate = useNavigate();
+
+  const handleFeatureClick = (featureTitle) => {
+    // This check will navigate to the quiz page if the correct card is clicked.
+    // Ensure the title in your featureData.jsx is an exact match.
+    if (featureTitle === "AI Career Roadmap") {
+      navigate("/quiz");
+    } else {
+      console.log(`Navigation for "${featureTitle}" is not yet implemented.`);
+      // You could add an alert for non-implemented features:
+      // alert(`The "${featureTitle}" feature is coming soon!`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Dashboard Navigation */}
@@ -17,7 +32,6 @@ const Dashboard = ({ setIsLoggedIn }) => {
                 Career Companion
               </span>
             </div>
-
             <div className="flex items-center space-x-4">
               <button className="relative p-2 rounded-full hover:bg-gray-100">
                 <Bell className="w-5 h-5 text-gray-500" />
@@ -27,7 +41,7 @@ const Dashboard = ({ setIsLoggedIn }) => {
                 <User className="w-4 h-4 text-blue-600" />
               </div>
               <button
-                onClick={() => setIsLoggedIn(false)}
+                onClick={handleLogout}
                 className="text-sm text-gray-600 hover:text-gray-800"
               >
                 Logout
@@ -70,7 +84,8 @@ const Dashboard = ({ setIsLoggedIn }) => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow cursor-pointer group"
+              onClick={() => handleFeatureClick(feature.title)}
+              className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-lg hover:-translate-y-1 active:scale-[0.98] transition-all cursor-pointer group"
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="group-hover:scale-110 transition-transform">
@@ -84,9 +99,10 @@ const Dashboard = ({ setIsLoggedIn }) => {
               <p className="text-sm text-gray-600 mb-4">
                 {feature.description}
               </p>
-              <button className="text-blue-600 text-sm font-medium hover:text-blue-700 flex items-center gap-1">
-                Open <ArrowRight className="w-3 h-3" />
-              </button>
+              {/* The button is now part of the larger clickable card */}
+              <div className="text-blue-600 text-sm font-medium group-hover:text-blue-700 flex items-center gap-1">
+                Open <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+              </div>
             </div>
           ))}
         </div>
@@ -96,3 +112,4 @@ const Dashboard = ({ setIsLoggedIn }) => {
 };
 
 export default Dashboard;
+
